@@ -1,4 +1,52 @@
+/*#wrapper { 
+    position: relative; 
+}
+
+#over_map { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 99; 
+}
+
 #map{
     height: 800px;
     width: 100%;
 }
+
+#over_map #filter {
+    margin-right: 15px;
+    right: 0;
+}*/
+
+html, body {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  #map {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+  }
+  
+  .content {
+    position: absolute;
+    top: 50px;
+    right: 15px;
+    background: white;
+
+    border-radius: 3px;
+    padding: 1px; 
+  }
+
+  .content label {
+      margin-bottom: 0px;
+  }
