@@ -1,5 +1,6 @@
 var map;
-var markers;
+var allMarkers = new Map();
+var displayedMarkers = new Map();
 
 function initMap() {
     // Map options
@@ -17,28 +18,17 @@ function initMap() {
     // New map
     map = new google.maps.Map(document.getElementById('map'), options);
 
-    //var markers = new Map();
-    // Listen for click on map
-    //google.maps.event.addListener(map, 'click', function(event){
-    // Add marker
-    //  addMarker({coords:event.latLng});
-    //});
-
     var rawData = LoadData();
-    markers = ConstructData(rawData);
+    allMarkers = CreateMarkerDictionary(rawData);
 
-    for (var [key, value] of markers) {
-        addFilter(key);
-
-        // temp, should be done later on
-        for (var i = 0; i < value.length; i++) {
-            addMarker(value[i]);
-        }
+    for (var [key, value] of allMarkers) {
+        DisplayFilter(key);
+        displayedMarkers.set(key, []);
     }
 }
 
 // Add Marker Function
-function addMarker(props) {
+function DisplayMarker(props) {
     var marker = new google.maps.Marker({
         position: props.coords,
         map: map,
@@ -61,30 +51,31 @@ function addMarker(props) {
             infoWindow.open(map, marker);
         });
     }
+    return marker;
 }
 
-function addFilter(name) {
-    $('.funkyradio').append(
-        '<div class="funkyradio-default ' + name + '">' +
-        '<input type="checkbox" name="checkbox ' + name + '" id="checkbox ' + name + '" checked/>' +
-        '<label for="checkbox ' + name + '">' + name + '</label>' +
+function DisplayFilter(name) {
+    $('.filter').append(
+        '<div class="filter-default ' + name + '">' +
+            '<input type="checkbox" name="checkbox ' + name + '" id="checkbox ' + name + '" value="' + name + '"/>' +
+            '<label class="filterLabel" for="checkbox ' + name + '">' + name + '</label>' +
         '</div>'
     );
 }
 
-function CreateMarkerDataMap(data) {
-    var newMarkers = new Map();
-    // 3 should be data list
+function CreateMarkerDictionary(data) {
+    var markers = new Map();
     for (var i = 0; i < data.length; i++) {
-        if (!newMarkers.has(data[i].type)) {
-            newMarkers.set(data[i].type, []);
+        var tmp = data[i];
+        if (!markers.has(tmp.type)) {
+            markers.set(tmp.type, []);
         }
-        newMarkers.get(data[i].type).push(CreateMarker(data[i]));
+        markers.get(tmp.type).push(CreateMarker(tmp));
     }
-    return newMarkers;
+    return markers;
 }
 
-function CreateMarkerData(data) {
+function CreateMarker(data) {
     // do something with iconimage here
     var marker = {
         coords: data.coords,
@@ -119,3 +110,20 @@ function LoadData() {
     ];
     return rawData;
 }
+
+$(document).on('click', '.filterLabel', function() {
+    var value = $(this).prev("input[type='checkbox']").val();
+    var checked = $(this).prev("input[type='checkbox']:checked").length > 0;
+    var filterData = allMarkers.get(value);
+    for (var i = 0; i < filterData.length; i++) {
+        if (checked) {
+            displayedMarkers.get(value)[i].setMap(null);
+        } else {
+            displayedMarkers.get(value).push(DisplayMarker(filterData[i]));    
+        }
+    }
+    // empty displayed array
+    if (checked) {
+        displayedMarkers.set(value, []);
+    }
+})
