@@ -12,7 +12,12 @@ function initMap() {
         scaleControl: true,
         streetViewControl: false,
         rotateControl: false,
-        fullscreenControl: false
+        fullscreenControl: false,
+        styles: [
+            {"featureType": "road.highway",elementType: "labels",stylers:[{visibility: "off"}]}, //turns off highway labels
+            {"featureType": "road.arterial",elementType: "labels",stylers: [{visibility: "off"}]}, //turns off arterial roads labels
+            {"featureType": "road.local",elementType: "labels",stylers: [{visibility: "off"}]}  //turns off local roads labels
+        ]
     }
 
     // New map
